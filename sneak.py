@@ -11,9 +11,6 @@ from HTMLParser import HTMLParser
 
 # create a subclass and override the handler methods
 class titlefinder(HTMLParser):
-    #self.start_title=0
-    #self.title = ''
-    #self.stop_title=0    
     def __init__(self):        
         HTMLParser.__init__(self) # http://stackoverflow.com/a/9698750
         self.start_title=0
@@ -36,12 +33,15 @@ def handle_url(url, chan):
     if rep_code == 200:
         # Was a great succes!
         # zoek title
-        html = unicode(response.read(), 'utf-8') # thanks to <MinceR> from #Corsair on OFTC
-        find_title = titlefinder()
-        find_title.feed(html)
-        title =  find_title.get_title()
-        MyConn.send_string("PRIVMSG %s :%s" % (chan, title))
-            
+	try:
+		html = unicode(response.read(), 'utf-8') # thanks to <MinceR> from #Corsair on OFTC
+		find_title = titlefinder()
+		find_title.feed(html)
+		title =  find_title.get_title()
+		MyConn.send_string("PRIVMSG %s :%s" % (chan, title))
+	except UnicodeDecodeError:
+		print("Unicode Decode Error. Can't parse: " + url)
+		    
 def handle_raw(line):
     print line
 
@@ -70,7 +70,7 @@ MyConn.nick="sneak"
 MyConn.ident="snpeak"
 MyConn.server=("irc.chat.be", 6667)
 MyConn.realname="Title Anouncer"
-channel="#chathere"
+channel="#testung"
 quit_reason="Bye Bye was a fun time."
 
 # Before starting the main loop, add the event listeners.
